@@ -20,10 +20,10 @@ public class BasicExample {
 	@AnnoArg(key = "password")
 	private static String password;
 
-	@AnnoArg(key = "user", desc = "Description about this command-line argument", hidden = false)
+	@AnnoArg(key = "user")
 	private static boolean debug;
 
-	@AnnoArg(key = "log", desc = "Description about this command-line argument")
+	@AnnoArg(key = "log")
 	private static boolean log;
 
 	public static void main(String[] args) {
@@ -34,9 +34,9 @@ public class BasicExample {
 		String[] customCommandLineArguments = "-log --ip localhost -debug --port 8080 --user Admin --password 1234".split(" ");
 
 		// Read arguments and set fields from a string array.
-		JAnnoArgs.parse(basicExample, false, customCommandLineArguments);
+		JAnnoArgs.get().parse(basicExample, false, customCommandLineArguments);
 
-		// JAnnoArgs.parse(basicExample, false, args); // Example 2
+		// JAnnoArgs.get().parse(basicExample, false, args); // Example 2
 
 		// Display variables
 		System.out.println("Ip: " + ip);

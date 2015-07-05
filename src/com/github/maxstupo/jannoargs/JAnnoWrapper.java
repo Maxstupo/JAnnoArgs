@@ -8,11 +8,19 @@ import java.lang.reflect.Field;
  * @author Maxstupo
  */
 public class JAnnoWrapper {
-	public Field field;
-	public AnnoArg anno;
+	private final Field field;
+	private final AnnoArg anno;
 
 	public JAnnoWrapper(Field field, AnnoArg anno) {
 		this.field = field;
 		this.anno = anno;
+	}
+
+	public Field getField() {
+		return field;
+	}
+
+	public AnnoArg getAnno() {
+		return anno;
 	}
 }

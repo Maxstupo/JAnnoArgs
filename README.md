@@ -1,4 +1,4 @@
-JAnnoArgs v1.0
+JAnnoArgs v1.1
 ====================
 
 #####What is JAnnoArgs?

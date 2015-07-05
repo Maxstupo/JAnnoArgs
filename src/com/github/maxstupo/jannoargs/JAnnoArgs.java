@@ -8,6 +8,16 @@ import java.lang.reflect.Field;
  * @author Maxstupo
  */
 public class JAnnoArgs {
+	private static JAnnoArgs instance;
+
+	private JAnnoArgs() {
+	}
+
+	public static final JAnnoArgs get() {
+		if (instance == null)
+			instance = new JAnnoArgs();
+		return instance;
+	}
 
 	/**
 	 * Parse the args array, and set the fields denoted by <code>@AnnoArg()</code> in the given object.
@@ -20,7 +30,7 @@ public class JAnnoArgs {
 	 *            The arguments that will be parsed.
 	 * @return false if an argument does not exist.
 	 */
-	public static boolean parse(Object obj, boolean caseSensitive, String... args) {
+	public boolean parse(Object obj, boolean caseSensitive, String... args) {
 		Class<?> c = obj.getClass();
 
 		String value = "";
@@ -37,11 +47,10 @@ public class JAnnoArgs {
 
 				JAnnoWrapper wrap = getAnnotationByKey(c, booleanKey, caseSensitive);
 				if (wrap != null) {
-					if (wrap.field.getType() == boolean.class) {
-						set(obj, wrap.field, true);
+					if (wrap.getField().getType() == boolean.class) {
+						set(obj, wrap.getField(), true);
 					}
 				} else {
-					printInfo(c);
 					return false;
 				}
 				continue;
@@ -52,33 +61,19 @@ public class JAnnoArgs {
 			JAnnoWrapper wrap = getAnnotationByKey(c, key, caseSensitive);
 			if (wrap != null) {
 				try {
-					Object val = convert(wrap.field.getType(), value);
-					set(obj, wrap.field, val);
+					Object val = convert(wrap.getField().getType(), value);
+					set(obj, wrap.getField(), val);
 				} catch (Exception e) {
-					System.err.println("Invalid type, " + key + ": " + wrap.field.getType() + ", Value: " + value);
+					System.err.println("Invalid type, " + key + ": " + wrap.getField().getType() + ", Value: " + value);
 				}
 			} else {
-				printInfo(c);
 				return false;
 			}
 		}
 		return true;
 	}
 
-	private static void printInfo(Class<?> c) {
-		System.out.println("Valid arguments: ");
-
-		for (Field field : c.getDeclaredFields()) {
-			AnnoArg anno = field.getAnnotation(AnnoArg.class);
-			if (anno == null)
-				continue;
-			if (!anno.hidden())
-				System.out.println("   " + anno.key() + " -  " + anno.desc());
-
-		}
-	}
-
-	private static void set(Object theClass, Field field, Object obj) {
+	private void set(Object theClass, Field field, Object obj) {
 		boolean setAccessible = false;
 		try {
 			if (!field.isAccessible()) {
@@ -97,7 +92,7 @@ public class JAnnoArgs {
 		}
 	}
 
-	private static Object convert(Class<?> c, String val) throws Exception {
+	private Object convert(Class<?> c, String val) throws Exception {
 		if (c == String.class) {
 			return val;
 		} else if (c == int.class) {
@@ -115,13 +110,13 @@ public class JAnnoArgs {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get AnnoArg annotation that has the key value equal to given key
 	 * 
 	 * @return The Wrapper containing the field and the annotation.
 	 */
-	private static JAnnoWrapper getAnnotationByKey(Class<?> classToSearch, String key, boolean caseSensitive) {
+	private JAnnoWrapper getAnnotationByKey(Class<?> classToSearch, String key, boolean caseSensitive) {
 		for (Field field : classToSearch.getDeclaredFields()) {
 			AnnoArg anno = field.getAnnotation(AnnoArg.class);
 			if (anno == null)
@@ -137,13 +132,13 @@ public class JAnnoArgs {
 		return null;
 	}
 
-	private static boolean isBooleanTag(String str) {
+	private boolean isBooleanTag(String str) {
 		if (str.length() < 2)
 			return false;
 		return str.substring(0, 1).equalsIgnoreCase("-") && !str.substring(1, 2).equalsIgnoreCase("-");
 	}
 
-	private static boolean isVarTag(String str) {
+	private boolean isVarTag(String str) {
 		if (str.length() < 2)
 			return false;
 		return str.substring(0, 1).equalsIgnoreCase("-") && str.substring(1, 2).equalsIgnoreCase("-");
