@@ -16,8 +16,12 @@ public class JAnnoArgs {
 	}
 
 	/**
-	 * Parse given string array, and set the fields that are tagged with a {@link CmdArgument} annotation from the given object.<br>
-	 * Supported data types are<code> Boolean, String, Integer, Float, Double, Long </code> and the listed primitive counterparts.
+	 * Parse given string array, and set the fields that are tagged with a {@link CmdArgument} annotation from the given object.
+	 * Supported data types are<code> Boolean, String, Integer, Float, Double, Long </code> and the listed primitive counterparts.<p>
+	 * 
+	 * Syntax:<br>
+	 *   - Boolean fields prefix the key with plus(+) for true, or prefix a hyphen(-) for false.<br>
+	 *	 - Value fields prefix the key with double hyphens (--) followed by a space and the value. 
 	 * 
 	 * @param obj The object to look for fields and apply values to fields.
 	 * @param args
