@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * JAnnoArgs class handles the reading of program arguments and sets fields with the annotation <code>AnnoArg</code>.
+ * JAnnoArgs class handles the reading of program arguments and sets fields with the annotation {@link CmdArgument}.
  * 
  * @author Maxstupo
  */
