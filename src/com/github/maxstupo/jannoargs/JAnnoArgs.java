@@ -3,6 +3,7 @@ package com.github.maxstupo.jannoargs;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * JAnnoArgs class handles the reading of program arguments and sets fields with the annotation <code>AnnoArg</code>.
@@ -16,14 +17,15 @@ public class JAnnoArgs {
 	}
 
 	/**
-	 * Parse given string array, and set the fields that are tagged with a {@link CmdArgument} annotation from the given object.
-	 * Supported data types are<code> Boolean, String, Integer, Float, Double, Long </code> and the listed primitive counterparts.<p>
+	 * Parse given string array, and set the fields that are annotated with a {@link CmdArgument} annotation from the given object. Supported data types are<code> Boolean, String, Integer, Float, Double, Long </code> and the listed primitive counterparts.
+	 * <p>
 	 * 
 	 * Syntax:<br>
-	 *   - Boolean fields prefix the key with plus(+) for true, or prefix a hyphen(-) for false.<br>
-	 *	 - Value fields prefix the key with double hyphens (--) followed by a space and the value. 
+	 * - Boolean fields prefix the key with plus(+) for true, or prefix a hyphen(-) for false.<br>
+	 * - Value fields prefix the key with double hyphens (--) followed by a space and the value.
 	 * 
-	 * @param obj The object to look for fields and apply values to fields.
+	 * @param obj
+	 *            The object to look for fields and apply values to fields.
 	 * @param args
 	 */
 	public void parseArguments(Object obj, String... args) {
@@ -103,7 +105,14 @@ public class JAnnoArgs {
 		return null;
 	}
 
-	public Map<String, Field> createKeyToFieldsMap(Object obj) {
+	/**
+	 * Gets all fields annotated with {@link CmdArgument} from the given object and maps them to the given {@link CmdArgument#key() key} from the annotation.
+	 * 
+	 * @param obj
+	 *            The object to search for fields.
+	 * @return A map containing {@link Field fields} referenced by {@link CmdArgument#key() keys}.
+	 */
+	public static Map<String, Field> createKeyToFieldsMap(Object obj) {
 		Map<String, Field> keyToField = new HashMap<String, Field>();
 
 		for (Field field : obj.getClass().getDeclaredFields()) {
@@ -114,6 +123,28 @@ public class JAnnoArgs {
 		}
 
 		return keyToField;
+	}
+
+	/**
+	 * Prints all fields in the given object annotated with a {@link CmdArgument} annotation with format of [{@link CmdArgument#key() key}: (fieldName = fieldValue)]
+	 * 
+	 * @param obj
+	 *            The object to look for fields.
+	 */
+	public static void printCmdArgumentFields(Object obj) {
+		Map<String, Field> keyToFields = createKeyToFieldsMap(obj);
+
+		for (Entry<String, Field> entry : keyToFields.entrySet()) {
+			try {
+				Field field = entry.getValue();
+				field.setAccessible(true);
+
+				System.out.println(entry.getKey() + ": ('" + entry.getValue().getName() + "' = '" + field.get(obj) + "')");
+
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static final JAnnoArgs get() {
