@@ -6,12 +6,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for setting fields.
+ * Annotation used by JAnnoArgs for setting a field from command line arguments.
  * @author Maxstupo
  */
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface AnnoArg {
+public @interface CmdArgument {
 	/** The key for referencing the field using command line arguments. */
-	String key() default "key";
+	String key();
+	
+	boolean ignoreCase() default true;
 }
