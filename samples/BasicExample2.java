@@ -1,5 +1,3 @@
-package com.github.maxstupo.jannoargs.test;
-
 import com.github.maxstupo.jannoargs.CmdArgument;
 import com.github.maxstupo.jannoargs.JAnnoArgs;
 
@@ -40,13 +38,7 @@ public class BasicExample2 {
 		JAnnoArgs.get().parseArguments(basicExample, args);
 
 		// Display variables
-		System.out.println("Ip: " + basicExample.ip);
-		System.out.println("Port: " + basicExample.port);
-		System.out.println("Username: " + basicExample.username);
-		System.out.println("Password: " + basicExample.password);
-		System.out.println("Debug: " + basicExample.debug);
-		System.out.println("Log: " + basicExample.logToFile);
-		System.out.println("GuiEnabled: " + basicExample.guiEnabled);
+		JAnnoArgs.printCmdArgumentFields(basicExample);
 	}
 
 }
