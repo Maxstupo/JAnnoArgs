@@ -16,5 +16,4 @@ public @interface CmdArgument {
 	/** The key for referencing the field using command line arguments. */
 	String key();
 	
-	boolean ignoreCase() default true;
 }
