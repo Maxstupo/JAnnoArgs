@@ -1,7 +1,9 @@
 package com.github.maxstupo.jannoargs;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -13,7 +15,18 @@ import java.util.Map.Entry;
 public class JAnnoArgs {
 	private static JAnnoArgs instance;
 
+	private final Map<String, IArgumentEvent> events = new HashMap<>();
+
 	private JAnnoArgs() {
+	}
+
+	public boolean registerEvent(String argumentName, IArgumentEvent evt) {
+
+		if (events.containsKey(argumentName))
+			return false;
+
+		events.put(argumentName, evt);
+		return true;
 	}
 
 	/**
@@ -30,12 +43,14 @@ public class JAnnoArgs {
 	 */
 	public void parseArguments(Object obj, String... args) {
 		Map<String, Field> keyToFields = createKeyToFieldsMap(obj);
+		List<String> keys = new ArrayList<>();
 
 		boolean assignNext = false;
 		String key = null;
 		for (String arg : args) {
 			if (assignNext) {
 				handleVariable(keyToFields, obj, key, arg);
+				keys.add(key);
 				assignNext = false;
 			}
 
@@ -43,12 +58,26 @@ public class JAnnoArgs {
 				key = arg.substring(2);
 				assignNext = true;
 			} else if (arg.startsWith("-")) {
-				handleBoolean(keyToFields, obj, arg.substring(1), false);
+				String tempKey = arg.substring(1);
+				handleBoolean(keyToFields, obj, tempKey, false);
+				keys.add(tempKey);
+
 			} else if (arg.startsWith("+")) {
-				handleBoolean(keyToFields, obj, arg.substring(1), true);
+				String tempKey = arg.substring(1);
+				handleBoolean(keyToFields, obj, tempKey, true);
+				keys.add(tempKey);
 			}
 
 		}
+
+		
+		for (Entry<String, IArgumentEvent> entry : events.entrySet()) {
+			
+			if (!keys.contains(entry.getKey()))
+				continue;
+			entry.getValue().onEvent(entry.getKey());
+		}
+
 	}
 
 	private boolean handleBoolean(Map<String, Field> keyToFields, Object obj, String key, boolean state) {
