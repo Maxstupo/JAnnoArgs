@@ -7,22 +7,24 @@ import com.github.maxstupo.jannoargs.JAnnoArgs;
  */
 public class BasicExample2 {
 
-	@CmdArgument(key = "ip")
+	// Use 'desc' to describe the argument for the generated help.
+	@CmdArgument(key = "ip", desc = "The ip of the server.")
 	private String ip;
 
-	@CmdArgument(key = "port")
+	@CmdArgument(key = "port", desc = "The port of the server.")
 	private int port;
 
-	@CmdArgument(key = "user")
+	@CmdArgument(key = "user", desc = "The username for the login.")
 	private String username;
 
 	@CmdArgument(key = "password")
 	private String password;
 
-	@CmdArgument(key = "debug")
+	// Use 'hide' to prevent the argument being listed in the generated help.
+	@CmdArgument(key = "debug", hide = true)
 	private boolean debug;
 
-	@CmdArgument(key = "log")
+	@CmdArgument(key = "log", desc = "If true the program will log to file.")
 	private boolean logToFile;
 
 	@CmdArgument(key = "gui")
@@ -35,7 +37,7 @@ public class BasicExample2 {
 		BasicExample2 basicExample = new BasicExample2();
 
 		// Parse argument array and set fields.
-		JAnnoArgs.get().parseArguments(basicExample, args);
+		JAnnoArgs.get().parseArguments(true, "A basic example of JAnnoArgs", true, basicExample, commandLineArguments);
 
 		// Display variables
 		JAnnoArgs.printCmdArgumentFields(basicExample);
