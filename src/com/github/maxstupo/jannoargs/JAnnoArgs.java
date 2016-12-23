@@ -68,7 +68,37 @@ public class JAnnoArgs {
 	 * @return false if parsing failed.
 	 */
 	public boolean parseArguments(boolean displayHelp, String programDescription, boolean displaySyntax, Object obj, String... args) {
+		return parseArguments(displayHelp, programDescription, displaySyntax, obj, new Object[0], args);
+	}
+
+	/**
+	 * Parse given string array, and set the fields that are annotated with a {@link CmdArgument} annotation from the given object. Supported data types are<code> Boolean, String, Integer, Float, Double, Long </code> and the listed primitive counterparts.
+	 * <p>
+	 * 
+	 * Syntax:<br>
+	 * - Boolean fields prefix the key with plus(+) for true, or prefix a hyphen(-) for false.<br>
+	 * - Value fields prefix the key with double hyphens (--) followed by a space and the value.
+	 * 
+	 * @param displayHelp
+	 *            If true generated help will be displayed if an error occured.
+	 * @param programDescription
+	 *            The description that will be used in the generated help. Set to null or empty to disable description.
+	 * @param displaySyntax
+	 *            If true the syntax will be displayed within the generated help.
+	 * @param obj
+	 *            The object to look for fields with {@link CmdArgument} annotation.
+	 * @param ignoreObjs
+	 *            {@link CmdArgument CmdArguments} within the object will be ignored, and will prevent help being displayed.
+	 * @param args
+	 * @return false if parsing failed.
+	 */
+	public boolean parseArguments(boolean displayHelp, String programDescription, boolean displaySyntax, Object obj, Object[] ignoreObjs, String... args) {
 		Map<String, Field> keyToFields = createKeyToFieldsMap(obj);
+
+		Map<String, Field> ignoreMap = new HashMap<>();
+		for (Object o : ignoreObjs)
+			ignoreMap.putAll(createKeyToFieldsMap(o));
+
 		List<String> keys = new ArrayList<>();
 
 		boolean failed = false;
@@ -86,15 +116,25 @@ public class JAnnoArgs {
 
 			if (arg.startsWith("--")) {
 				key = arg.substring(2);
+
+				if (ignoreMap.containsKey(key))
+					continue;
+
 				assignNext = true;
 
 			} else if (arg.startsWith("-")) {
 				String tempKey = arg.substring(1);
+				if (ignoreMap.containsKey(tempKey))
+					continue;
+
 				failed = !handleBoolean(keyToFields, obj, tempKey, false);
 				keys.add(tempKey);
 
 			} else if (arg.startsWith("+")) {
 				String tempKey = arg.substring(1);
+				if (ignoreMap.containsKey(tempKey))
+					continue;
+
 				failed = !handleBoolean(keyToFields, obj, tempKey, true);
 				keys.add(tempKey);
 
@@ -105,7 +145,8 @@ public class JAnnoArgs {
 		}
 
 		if (failed) {
-			System.out.println(generateHelp(programDescription, displaySyntax, obj));
+			if (displayHelp)
+				System.out.println(generateHelp(programDescription, displaySyntax, obj));
 			return false;
 		}
 
