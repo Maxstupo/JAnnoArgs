@@ -1,4 +1,4 @@
-# JAnnoArgs v1.3
+# JAnnoArgs v1.4
 
 #### What is JAnnoArgs?
 JAnnoArgs is a annotation based command-line parser library.
