@@ -22,6 +22,15 @@ public class JAnnoArgs {
     private JAnnoArgs() {
     }
 
+    /**
+     * Registers an event with the argument name.
+     * 
+     * @param argumentName
+     *            the name of the argument.
+     * @param evt
+     *            the event that will be called if the argument is present.
+     * @return true if the event was registered, false if the argument name has already been registered.
+     */
     public boolean registerEvent(String argumentName, IArgumentEvent evt) {
 
         if (events.containsKey(argumentName))
@@ -87,7 +96,7 @@ public class JAnnoArgs {
      * - Value fields prefix the key with double hyphens (--) followed by a space and the value.
      * 
      * @param displayHelp
-     *            If true generated help will be displayed if an error occured.
+     *            If true generated help will be displayed if an error occurred.
      * @param programDescription
      *            The description that will be used in the generated help. Set to null or empty to disable description.
      * @param displaySyntax
@@ -325,6 +334,11 @@ public class JAnnoArgs {
         return sb.toString();
     }
 
+    /**
+     * Returns the single instance of {@link JAnnoArgs}.
+     * 
+     * @return the single instance of {@link JAnnoArgs}.
+     */
     public static final JAnnoArgs get() {
         if (instance == null)
             instance = new JAnnoArgs();
